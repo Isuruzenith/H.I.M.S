@@ -1,0 +1,18 @@
+USE master;
+GO
+
+IF DB_ID(N'HealthcareInventoryDB') IS NULL
+BEGIN
+    CREATE DATABASE HealthcareInventoryDB;
+END;
+GO
+
+ALTER DATABASE HealthcareInventoryDB SET RECOVERY SIMPLE;
+GO
+
+ALTER DATABASE HealthcareInventoryDB SET READ_COMMITTED_SNAPSHOT ON WITH ROLLBACK IMMEDIATE;
+GO
+
+USE HealthcareInventoryDB;
+GO
+
