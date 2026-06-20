@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { PurchaseOrderDialog } from "@/components/forms/purchase-order-dialog";
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
@@ -57,8 +56,8 @@ export default function PurchaseOrdersPage() {
   );
 
   return (
-    <AppShell>
-      <PageHeader title="Purchase Orders" description="Procurement orders for replenishing hospital inventory stock." action={<PurchaseOrderDialog suppliers={suppliers} onSaved={load} />} />
+    <>
+      <PageHeader title="Purchase Orders" description="Create and track procurement orders for inventory replenishment." action={<PurchaseOrderDialog suppliers={suppliers} onSaved={load} />} />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load purchase orders</AlertTitle>
@@ -68,13 +67,13 @@ export default function PurchaseOrdersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Purchase order list</CardTitle>
-          <CardDescription>Purchase order headers loaded from the Flask API.</CardDescription>
+          <CardDescription>All purchase orders with supplier, status, and order date.</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={filtered} loading={loading} search={search} onSearch={setSearch} />
         </CardContent>
       </Card>
-    </AppShell>
+    </>
   );
 }
 

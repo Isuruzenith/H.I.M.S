@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import { ABCChart, DemandSummaryChart, ExpiryRiskChart } from "@/components/charts/analytics-charts";
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
@@ -67,8 +66,8 @@ export default function AnalyticsPage() {
   }, []);
 
   return (
-    <AppShell>
-      <PageHeader title="Analytics" description="BI dashboard for demand, ABC classification, expiry risk, reorder recommendations, and supplier performance." />
+    <>
+      <PageHeader title="Analytics" description="Demand analysis, stock classification, expiry risk, and supplier performance." />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load analytics</AlertTitle>
@@ -79,21 +78,21 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Demand summary</CardTitle>
-            <CardDescription>Top issued quantities from BI demand summaries.</CardDescription>
+            <CardDescription>Highest issued quantities across all inventory items.</CardDescription>
           </CardHeader>
           <CardContent>{loading ? <div className="h-72" /> : <DemandSummaryChart data={demand} />}</CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>ABC classification</CardTitle>
-            <CardDescription>Distribution of A, B, and C stock classes.</CardDescription>
+            <CardDescription>Inventory items grouped by ABC classification.</CardDescription>
           </CardHeader>
           <CardContent>{loading ? <div className="h-72" /> : <ABCChart data={abc} />}</CardContent>
         </Card>
         <Card>
           <CardHeader>
             <CardTitle>Expiry risk</CardTitle>
-            <CardDescription>Batch counts by expiry alert level.</CardDescription>
+            <CardDescription>Number of batches at each expiry risk level.</CardDescription>
           </CardHeader>
           <CardContent>{loading ? <div className="h-72" /> : <ExpiryRiskChart data={expiry} />}</CardContent>
         </Card>
@@ -102,7 +101,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Reorder recommendations</CardTitle>
-            <CardDescription>Suggested reorder quantities from BI inventory demand.</CardDescription>
+            <CardDescription>Recommended reorder quantities based on demand patterns.</CardDescription>
           </CardHeader>
           <CardContent>
             <DataTable columns={reorderColumns} data={reorder} loading={loading} />
@@ -111,13 +110,13 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Supplier performance</CardTitle>
-            <CardDescription>Operational supplier performance report.</CardDescription>
+            <CardDescription>Supplier delivery and order fulfillment metrics.</CardDescription>
           </CardHeader>
           <CardContent>
             <DataTable columns={supplierColumns} data={suppliers} loading={loading} />
           </CardContent>
         </Card>
       </div>
-    </AppShell>
+    </>
   );
 }

@@ -39,7 +39,7 @@ export function DataTable<T>({
         <Input
           value={search ?? ""}
           onChange={(event) => onSearch(event.target.value)}
-          placeholder="Search records..."
+          placeholder="Search..."
           className="max-w-sm"
         />
       ) : null}
@@ -49,7 +49,7 @@ export function DataTable<T>({
       ) : data.length === 0 ? (
         <EmptyState message={emptyMessage} />
       ) : (
-        <div className="overflow-hidden rounded-lg border bg-background">
+        <div className="overflow-hidden rounded-md border border-border bg-card">
           <Table>
             <TableHeader>
               <TableRow>

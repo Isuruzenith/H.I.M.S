@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { InventoryItemDialog } from "@/components/forms/inventory-item-dialog";
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
@@ -50,8 +49,8 @@ export default function InventoryPage() {
   );
 
   return (
-    <AppShell>
-      <PageHeader title="Inventory" description="Master inventory items shared by medicines, equipment, and consumables." action={<InventoryItemDialog onSaved={load} />} />
+    <>
+      <PageHeader title="Inventory" description="Manage all inventory items across medicines, equipment, and consumables." action={<InventoryItemDialog onSaved={load} />} />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load inventory</AlertTitle>
@@ -61,12 +60,12 @@ export default function InventoryPage() {
       <Card>
         <CardHeader>
           <CardTitle>Inventory items</CardTitle>
-          <CardDescription>Search and review current stock calculated by the SQL Server function.</CardDescription>
+          <CardDescription>Search and review current stock levels for all registered items.</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={filtered} loading={loading} search={search} onSearch={setSearch} />
         </CardContent>
       </Card>
-    </AppShell>
+    </>
   );
 }
