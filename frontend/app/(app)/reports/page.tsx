@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
@@ -85,8 +84,8 @@ export default function ReportsPage() {
   }, []);
 
   return (
-    <AppShell>
-      <PageHeader title="Reports" description="Operational reports backed by SQL Server views and transaction history." />
+    <>
+      <PageHeader title="Reports" description="Operational reports for stock levels, expiry, consumption, and transactions." />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load reports</AlertTitle>
@@ -121,7 +120,7 @@ export default function ReportsPage() {
           </ReportCard>
         </TabsContent>
       </Tabs>
-    </AppShell>
+    </>
   );
 }
 

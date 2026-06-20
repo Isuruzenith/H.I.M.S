@@ -5,6 +5,12 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 
 import type { StockTransaction } from "@/types/stock";
 
+const TOOLTIP_STYLE = {
+  borderRadius: "6px",
+  border: "1px solid var(--border)",
+  fontSize: "12px",
+};
+
 export function MonthlyIssueChart({ transactions }: { transactions: StockTransaction[] }) {
   const mounted = useIsClient();
   const data = buildMonthlyData(transactions);
@@ -16,12 +22,21 @@ export function MonthlyIssueChart({ transactions }: { transactions: StockTransac
   return (
     <div className="h-72 min-h-72 min-w-0 w-full">
       <ResponsiveContainer>
-        <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="month" tickLine={false} axisLine={false} />
-          <YAxis tickLine={false} axisLine={false} />
-          <Tooltip />
-          <Bar dataKey="quantity" fill="var(--primary)" radius={[6, 6, 0, 0]} />
+        <BarChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
+          <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+          />
+          <Tooltip contentStyle={TOOLTIP_STYLE} />
+          <Bar dataKey="quantity" fill="var(--chart-2)" radius={[3, 3, 0, 0]} maxBarSize={48} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -47,8 +46,8 @@ export default function MedicinesPage() {
   );
 
   return (
-    <AppShell>
-      <PageHeader title="Medicines" description="Medicine-specific inventory records for pharmacy stock control." />
+    <>
+      <PageHeader title="Medicines" description="Pharmacy medicine inventory and stock levels." />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load medicines</AlertTitle>
@@ -58,12 +57,12 @@ export default function MedicinesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Medicine catalog</CardTitle>
-          <CardDescription>Subtype data joined with current inventory stock.</CardDescription>
+          <CardDescription>Medicine records with dosage, form, and current stock availability.</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={filtered} loading={loading} search={search} onSearch={setSearch} />
         </CardContent>
       </Card>
-    </AppShell>
+    </>
   );
 }

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { ReceiveStockDialog } from "@/components/forms/receive-stock-dialog";
-import { AppShell } from "@/components/layout/app-shell";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
@@ -61,8 +60,8 @@ export default function StockBatchesPage() {
   );
 
   return (
-    <AppShell>
-      <PageHeader title="Stock Batches" description="Batch-level stock tracking with expiry and FEFO-ready quantities." action={<ReceiveStockDialog items={items} suppliers={suppliers} onSaved={load} />} />
+    <>
+      <PageHeader title="Stock Batches" description="Batch-level tracking with expiry dates and available quantities." action={<ReceiveStockDialog items={items} suppliers={suppliers} onSaved={load} />} />
       {error ? (
         <Alert variant="destructive" className="mb-6">
           <AlertTitle>Could not load stock batches</AlertTitle>
@@ -72,13 +71,13 @@ export default function StockBatchesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Stock batches</CardTitle>
-          <CardDescription>Batch availability, suppliers, and expiry risk from SQL Server.</CardDescription>
+          <CardDescription>Batch records with supplier, quantity, and expiry status.</CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={filtered} loading={loading} search={search} onSearch={setSearch} />
         </CardContent>
       </Card>
-    </AppShell>
+    </>
   );
 }
 
