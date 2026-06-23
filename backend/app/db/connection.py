@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import re
 from typing import Any, Iterable
 
 from app.config import Config
@@ -19,17 +20,25 @@ def _load_pyodbc():
     return pyodbc
 
 
-def get_connection(autocommit: bool = False):
+def get_connection(autocommit: bool = False, database: str | None = None):
     if not Config.SQLSERVER_CONNECTION_STRING:
         raise DatabaseConnectionError("SQLSERVER_CONNECTION_STRING is not configured.")
 
+    conn_str = Config.SQLSERVER_CONNECTION_STRING
+    if database is not None:
+        pattern = re.compile(r'(database\s*=\s*)[^;]+', re.IGNORECASE)
+        if pattern.search(conn_str):
+            conn_str = pattern.sub(rf'\g<1>{database}', conn_str)
+        else:
+            conn_str = conn_str.rstrip(";") + f";DATABASE={database};"
+
     pyodbc = _load_pyodbc()
-    return pyodbc.connect(Config.SQLSERVER_CONNECTION_STRING, autocommit=autocommit)
+    return pyodbc.connect(conn_str, autocommit=autocommit)
 
 
 @contextmanager
-def connection_scope(autocommit: bool = False):
-    connection = get_connection(autocommit=autocommit)
+def connection_scope(autocommit: bool = False, database: str | None = None):
+    connection = get_connection(autocommit=autocommit, database=database)
     try:
         yield connection
         if not autocommit:
