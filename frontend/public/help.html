@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>H.I.M.S. - System Help Manual & Credentials Gateway</title>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #090d16;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-card-hover: rgba(31, 41, 55, 0.5);
+      --border-color: rgba(75, 85, 99, 0.25);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --color-primary: #3b82f6;
+      --color-primary-hover: #2563eb;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-purple: #8b5cf6;
+      
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-primary);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    
+    .badge-primary {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    @media (min-width: 850px) {
+      .grid-2 {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    /* Card Styling */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-purple));
+      opacity: 0.8;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+
+    /* Credentials Table */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      padding: 14px 16px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(75, 85, 99, 0.15);
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .role-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .role-Admin { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+    .role-InventoryManager { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+    .role-Pharmacist { background: rgba(245, 158, 11, 0.15); color: #fde047; }
+    .role-ProcurementOfficer { background: rgba(139, 92, 246, 0.15); color: #c084fc; }
+    .role-DepartmentStaff { background: rgba(236, 72, 153, 0.15); color: #fbcfe8; }
+    .role-HospitalAdministrator { background: rgba(20, 184, 166, 0.15); color: #99f6e4; }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-smooth);
+      font-family: inherit;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    .copy-btn.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--color-success);
+      color: #6ee7b7;
+    }
+
+    code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #fb7185;
+      font-size: 0.9rem;
+    }
+
+    /* Workflow list */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 15px;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-purple));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .step-content h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .step-content p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Feature Tabs/Accordions */
+    .tab-section {
+      margin-top: 40px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .accordion-item {
+      background: rgba(17, 24, 39, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+
+    .accordion-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-card-hover);
+    }
+
+    .accordion-header {
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .accordion-header h3 {
+      font-size: 1.1rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .accordion-header h3 span.icon {
+      font-size: 1.3rem;
+    }
+
+    .accordion-arrow {
+      border: solid var(--text-secondary);
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 4px;
+      transform: rotate(45deg);
+      transition: var(--transition-smooth);
+    }
+
+    .accordion-item.active .accordion-arrow {
+      transform: rotate(-135deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+      padding: 0 20px;
+    }
+
+    .accordion-item.active .accordion-content {
+      max-height: 2000px;
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid rgba(75, 85, 99, 0.15);
+      transition: max-height 0.5s ease-in-out;
+    }
+
+    .feature-list {
+      list-style-type: none;
+      margin-top: 15px;
+    }
+
+    .feature-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .feature-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--color-success);
+      font-weight: bold;
+    }
+
+    .feature-list li strong {
+      color: #fff;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Keyframes */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <header>
+      <span class="badge badge-primary">Lecturer Evaluation Guide</span>
+      <h1>H.I.M.S. Demonstration Dashboard</h1>
+      <p>Welcome to the Healthcare Inventory Management System help manual and evaluation gateway. Use the quick-copy credentials below to test different roles and workflow features.</p>
+    </header>
+
+    <div class="grid grid-2">
+      
+      <!-- Left Side: Credentials Table Card -->
+      <div class="card">
+        <h2 class="card-title">
+          <svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11 0 0,0 1,12A11,11 0 0,0 12,23A11,11 0 0,0 23,12A11,11 0 0,0 12,1M12,3A3,3 0 0,1 15,6A3,3 0 0,1 12,9A3,3 0 0,1 9,6A3,3 0 0,1 12,3M12,21C9.07,21 6.5,19.5 5,17.2C5.03,14.87 9.67,13.6 12,13.6C14.33,13.6 19,14.87 19,17.2C17.5,19.5 14.93,21 12,21Z" /></svg>
+          Quick-Copy Credentials
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+          Select a role and click copy. The default password for all demo accounts is: <code>password</code>
+        </p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Copy Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="role-tag role-Admin">Admin</span></td>
+                <td><code id="u-admin">anjali.admin</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('anjali.admin', this)">Copy User</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="role-tag role-InventoryManager">Inventory Manager</span></td>
+                <td><code id="u-inventory">nuwan.inventory</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('nuwan.inventory', this)">Copy User</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="role-tag role-Pharmacist">Pharmacist</span></td>
+                <td><code id="u-pharmacist">kavindi.pharma</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('kavindi.pharma', this)">Copy User</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="role-tag role-ProcurementOfficer">Procurement Officer</span></td>
+                <td><code id="u-procure">dinesh.procure</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('dinesh.procure', this)">Copy User</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="role-tag role-DepartmentStaff">Department Staff</span></td>
+                <td><code id="u-staff">malith.er</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('malith.er', this)">Copy User</button>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="role-tag role-HospitalAdministrator">Hospital Admin</span></td>
+                <td><code id="u-hospadmin">harsha.admin</code></td>
+                <td><code>password</code></td>
+                <td>
+                  <button class="copy-btn" onclick="copyText('harsha.admin', this)">Copy User</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right Side: Workflow Overview Card -->
+      <div class="card">
+        <h2 class="card-title">
+          <svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M12,9A3,3 0 1,0 15,12A3,3 0 0,0 12,9M12,13.5A1.5,1.5 0 1,1 13.5,12A1.5,1.5 0 0,1 12,13.5Z" /></svg>
+          Demo Test Workflow
+        </h2>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+          To evaluate how the database triggers, constraints, and web components interact, follow this typical operational cycle:
+        </p>
+
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Direct Stock Issuing</h4>
+              <p>Log in as **Inventory Manager** (`nuwan.inventory`) or other staff, and go to the **"Issue Stock"** page.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Database FIFO Allocation</h4>
+              <p>Select a department and an item (e.g. Paracetamol), enter a quantity, and click **"Issue stock"**. The database stored procedure immediately runs the FEFO/FIFO batch reduction logic.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Procure Refill</h4>
+              <p>Log in as **Procurement Officer** (`dinesh.procure`), view low stock reorders, generate a Purchase Order, and receive stock to replenish.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>Analyze Analytics</h4>
+              <p>Log in as **Hospital Admin** (`harsha.admin`) to view ABC demand curves, reorder rates, and generate analytical PDF reports.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Feature Description Section -->
+    <div class="tab-section">
+      <h2 class="section-title">System Role & Feature Specifications</h2>
+      
+      <div class="accordion">
+        
+        <!-- Accordion Item 1 -->
+        <div class="accordion-item active">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">🛡️</span> Admin Panel (`anjali.admin`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Provides system configuration, settings adjustments, and hospital structure configurations.</p>
+            <ul class="feature-list">
+              <li><strong>Staff Onboarding:</strong> Create, update, or suspend user login credentials for clinical staff.</li>
+              <li><strong>Department Directory:</strong> Create new hospital wings, wards, or labs (e.g., ICU, Pharmacy, Surgery).</li>
+              <li><strong>Security Audits:</strong> Track overall registration patterns and account classifications.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion Item 2 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">📦</span> Inventory Management (`nuwan.inventory`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Central console for overseeing item levels, batch details, and handling internal distributions.</p>
+            <ul class="feature-list">
+              <li><strong>Inventory Catalog:</strong> Add, edit, or search for medicines, consumables, and equipments.</li>
+              <li><strong>Reorder Rules:</strong> Setup safety stock, reorder levels, and maximum thresholds for individual items.</li>
+              <li><strong>Issue Approval:</strong> Accept/Reject internal department issue requests, causing automated batch reductions via SQL Server triggers.</li>
+              <li><strong>Adjustment Logs:</strong> Manually adjust stock levels for items damaged or expired.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion Item 3 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">💊</span> Pharmacy & Medicines (`kavindi.pharma`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Access pharmaceutical listings, manage generic formulas, and check storage conditions.</p>
+            <ul class="feature-list">
+              <li><strong>Generic Database:</strong> Track generic vs brand names, dosage details (e.g., 500mg, 10ml), and drug forms (vial, tablet, capsule).</li>
+              <li><strong>Prescription Verification:</strong> Audit if prescription-required medications are flagged.</li>
+              <li><strong>Storage Constraints:</strong> Set and check cold chain storage regulations (e.g. Refrigerate 2-8°C).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion Item 4 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">💼</span> Procurement & Purchasing (`dinesh.procure`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Handles commercial interactions, manages suppliers, and creates stock acquisition orders.</p>
+            <ul class="feature-list">
+              <li><strong>Supplier Registry:</strong> Record contact details, addresses, lead times, and preferred statuses for vendors.</li>
+              <li><strong>Purchase Orders (PO):</strong> Generate PO requests, track states (Pending, Approved, Ordered, Completed), and calculate costs.</li>
+              <li><strong>Stock Intake:</strong> Reconcile ordered vs received item batches to automatically update system stock numbers.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion Item 5 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">🏥</span> Department Stock Requests (`malith.er`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Enables general wards, ER, and ICU staff to source items from the main pharmacy.</p>
+            <ul class="feature-list">
+              <li><strong>Request Dashboard:</strong> Create requests for medicines or consumables indicating required quantities.</li>
+              <li><strong>Request Status Tracking:</strong> Check if a request has been Approved, Issued, Rejected, or Cancelled.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Accordion Item 6 -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <h3><span class="icon">📊</span> Business Intelligence & Reports (`harsha.admin`)</h3>
+            <div class="accordion-arrow"></div>
+          </div>
+          <div class="accordion-content">
+            <p>Aggregated operational reports, demand summaries, and SQL views-driven charts.</p>
+            <ul class="feature-list">
+              <li><strong>ABC Analysis:</strong> Categorizes items based on consumption value (A: High value, B: Moderate value, C: Low value).</li>
+              <li><strong>Demand Categories:</strong> Classifies items into Fast Moving, Medium Moving, and Slow Moving groups.</li>
+              <li><strong>Supplier Performance:</strong> View average lead times, delayed order ratios, and cost structures per vendor.</li>
+              <li><strong>Operational Audit Log:</strong> Inspect complete historic transaction logs containing batch, user, and date fields.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer>
+      <p>Healthcare Inventory Management System &copy; 2026. Back to <a href="/">Application Home</a></p>
+    </footer>
+
+  </div>
+
+  <script>
+    function copyText(text, button) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = "Copied!";
+        button.classList.add("copied");
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove("copied");
+        }, 1500);
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    }
+
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      const isActive = item.classList.contains("active");
+      
+      // Close all accordion items
+      document.querySelectorAll(".accordion-item").forEach(el => {
+        el.classList.remove("active");
+      });
+      
+      // Open this item if it wasn't active
+      if (!isActive) {
+        item.classList.add("active");
+      }
+    }
+  </script>
+</body>
+</html>
