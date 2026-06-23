@@ -137,7 +137,7 @@ export function InventoryItemDialog({
               {item ? "Update inventory item and specifications." : "Create common inventory master data used by stock operations."}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={submit} className="space-y-4">
+          <form key={fullItem?.ItemID ?? "new"} onSubmit={submit} className="space-y-4">
             {detailLoading ? (
               <div className="flex h-32 items-center justify-center">
                 <p className="text-sm text-muted-foreground">Loading item specifications...</p>
