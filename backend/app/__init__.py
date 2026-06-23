@@ -13,6 +13,7 @@ from app.routes.report_routes import report_bp
 from app.routes.stock_routes import stock_bp
 from app.routes.supplier_routes import supplier_bp
 from app.routes.bi_routes import bi_bp
+from app.routes.alert_routes import alert_bp
 
 
 def create_app() -> Flask:
@@ -32,5 +33,6 @@ def create_app() -> Flask:
     app.register_blueprint(purchase_order_bp, url_prefix="/api/purchase-orders")
     app.register_blueprint(report_bp, url_prefix="/api/reports")
     app.register_blueprint(bi_bp, url_prefix="/api/bi")
+    app.register_blueprint(alert_bp, url_prefix="/api")
 
     return app

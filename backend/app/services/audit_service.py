@@ -30,7 +30,7 @@ def get_audit_stock_transactions(
 
     return fetch_all(
         f"""
-        SELECT TOP (?)
+        SELECT TOP {int(limit)}
             TransactionID,
             ItemName,
             BatchNumber,
@@ -45,5 +45,5 @@ def get_audit_stock_transactions(
         WHERE {" AND ".join(filters)}
         ORDER BY TransactionDate DESC, TransactionID DESC
         """,
-        [limit, *params],
+        params,
     )

@@ -30,33 +30,48 @@ type NavItem = {
   roles?: readonly string[];
 };
 
+const ALL_EXCEPT_DEPT: readonly string[] = [
+  "Admin",
+  "InventoryManager",
+  "Pharmacist",
+  "ProcurementOfficer",
+  "HospitalAdministrator",
+];
+
+const PROCUREMENT_ROLES: readonly string[] = [
+  "Admin",
+  "InventoryManager",
+  "ProcurementOfficer",
+  "HospitalAdministrator",
+];
+
 export const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "Overview",
-    items: [{ title: "Dashboard", href: "/dashboard", icon: Gauge }],
+    items: [{ title: "Dashboard", href: "/dashboard", icon: Gauge, roles: ALL_EXCEPT_DEPT }],
   },
   {
     label: "Stock Management",
     items: [
-      { title: "Inventory", href: "/inventory", icon: Boxes },
-      { title: "Medicines", href: "/medicines", icon: Pill },
-      { title: "Equipment", href: "/equipment", icon: ShieldPlus },
-      { title: "Stock Batches", href: "/stock-batches", icon: Warehouse },
+      { title: "Inventory", href: "/inventory", icon: Boxes, roles: ALL_EXCEPT_DEPT },
+      { title: "Medicines", href: "/medicines", icon: Pill, roles: ALL_EXCEPT_DEPT },
+      { title: "Equipment", href: "/equipment", icon: ShieldPlus, roles: ALL_EXCEPT_DEPT },
+      { title: "Stock Batches", href: "/stock-batches", icon: Warehouse, roles: ALL_EXCEPT_DEPT },
       { title: "Issue Stock", href: "/issue-stock", icon: PackageCheck },
     ],
   },
   {
     label: "Procurement",
     items: [
-      { title: "Suppliers", href: "/suppliers", icon: Truck },
-      { title: "Purchase Orders", href: "/purchase-orders", icon: ClipboardList },
+      { title: "Suppliers", href: "/suppliers", icon: Truck, roles: PROCUREMENT_ROLES },
+      { title: "Purchase Orders", href: "/purchase-orders", icon: ClipboardList, roles: PROCUREMENT_ROLES },
     ],
   },
   {
     label: "Insights",
     items: [
-      { title: "Reports", href: "/reports", icon: FileText },
-      { title: "Analytics", href: "/analytics", icon: BarChart3 },
+      { title: "Reports", href: "/reports", icon: FileText, roles: ALL_EXCEPT_DEPT },
+      { title: "Analytics", href: "/analytics", icon: BarChart3, roles: ALL_EXCEPT_DEPT },
       {
         title: "Audit Trail",
         href: "/audit/stock-transactions",

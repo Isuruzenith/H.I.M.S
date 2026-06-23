@@ -102,3 +102,22 @@ def link_supplier_item(supplier_id: int, payload: dict):
         """,
         [supplier_id, payload["item_id"]],
     )
+
+
+def get_supplier_items(supplier_id: int):
+    return fetch_all(
+        """
+        SELECT
+            si.ItemID,
+            i.ItemName,
+            i.ItemCategory,
+            si.SupplierUnitPrice,
+            si.PreferredSupplierStatus
+        FROM dbo.SupplierItem AS si
+        INNER JOIN dbo.InventoryItem AS i
+            ON i.ItemID = si.ItemID
+        WHERE si.SupplierID = ?
+        ORDER BY i.ItemName
+        """,
+        [supplier_id],
+    )

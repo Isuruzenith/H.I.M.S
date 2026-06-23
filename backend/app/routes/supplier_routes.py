@@ -6,6 +6,7 @@ from app.services.supplier_service import (
     get_suppliers,
     link_supplier_item,
     update_supplier,
+    get_supplier_items,
 )
 from app.utils.errors import handle_route_errors
 from app.utils.response import error_response, success_response
@@ -64,3 +65,9 @@ def supplier_item(supplier_id: int):
         return error_response("Validation failed", [f"{field} is required." for field in missing], 422)
 
     return success_response(link_supplier_item(supplier_id, payload), "Supplier item linked")
+
+
+@supplier_bp.get("/suppliers/<int:supplier_id>/items")
+@handle_route_errors
+def supplier_items(supplier_id: int):
+    return success_response(get_supplier_items(supplier_id), "Supplier items loaded")

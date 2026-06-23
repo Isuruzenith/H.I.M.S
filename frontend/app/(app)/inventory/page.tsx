@@ -2,23 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { Edit2 } from "lucide-react";
+
 import { InventoryItemDialog } from "@/components/forms/inventory-item-dialog";
 import { PageHeader } from "@/components/layout/page-header";
 import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { api, getErrorMessage } from "@/lib/api";
 import type { InventoryItem } from "@/types/inventory";
-
-const columns: DataColumn<InventoryItem>[] = [
-  { header: "Item", cell: (row) => row.ItemName },
-  { header: "Category", cell: (row) => <StatusBadge value={row.ItemCategory} /> },
-  { header: "Unit", cell: (row) => row.UnitOfMeasure },
-  { header: "Current", cell: (row) => row.CurrentStock ?? 0 },
-  { header: "Reorder", cell: (row) => row.ReorderLevel ?? 0 },
-  { header: "Status", cell: (row) => <StatusBadge value={row.ItemStatus} /> },
-];
 
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -42,6 +36,32 @@ export default function InventoryPage() {
   useEffect(() => {
     void Promise.resolve().then(load);
   }, []);
+
+  const columns = useMemo<DataColumn<InventoryItem>[]>(
+    () => [
+      { header: "Item", cell: (row) => row.ItemName },
+      { header: "Category", cell: (row) => <StatusBadge value={row.ItemCategory} /> },
+      { header: "Unit", cell: (row) => row.UnitOfMeasure },
+      { header: "Current", cell: (row) => row.CurrentStock ?? 0 },
+      { header: "Reorder", cell: (row) => row.ReorderLevel ?? 0 },
+      { header: "Status", cell: (row) => <StatusBadge value={row.ItemStatus} /> },
+      {
+        header: "Actions",
+        cell: (row) => (
+          <InventoryItemDialog
+            item={row}
+            onSaved={load}
+            trigger={
+              <Button variant="ghost" size="icon-sm" title="Edit Item">
+                <Edit2 className="size-3.5" />
+              </Button>
+            }
+          />
+        ),
+      },
+    ],
+    []
+  );
 
   const filtered = useMemo(
     () => items.filter((item) => item.ItemName.toLowerCase().includes(search.toLowerCase())),
