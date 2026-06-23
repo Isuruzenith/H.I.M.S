@@ -72,16 +72,23 @@ const AppSidebar = memo(function AppSidebar({
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-[260px] flex-col border-r border-sidebar-border bg-sidebar lg:flex">
-      <div className="flex h-[60px] items-center gap-3 border-b border-sidebar-border px-5">
-        <div className="flex size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-          <Icon className="size-4" aria-hidden="true" />
+      <div className="flex flex-col justify-center py-5 border-b border-sidebar-border px-5 gap-2.5">
+        <div className="flex items-center gap-3">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+            <Icon className="size-4" aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold tracking-wide text-sidebar-foreground leading-tight">
+              Jeewaka Hospital
+            </p>
+            <p className="text-[10px] font-bold text-primary tracking-wider uppercase leading-none mt-0.5">
+              PADUKKA
+            </p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold tracking-wide text-sidebar-foreground">
-            {APP_NAME}
-          </p>
-          <p className="truncate text-[11px] text-sidebar-foreground/60">{APP_TAGLINE}</p>
-        </div>
+        <p className="text-[10.5px] leading-normal text-sidebar-foreground/60 font-medium">
+          Smart Healthcare Inventory Management System (H.I.M.S)
+        </p>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">

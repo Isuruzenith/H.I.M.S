@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuth } from "@/components/auth/auth-provider";
 import { DEMO_STAFF_ID, FALLBACK_DEPARTMENTS } from "@/lib/constants";
 import { api, getErrorMessage, toBackendIssuePayload } from "@/lib/api";
 import type { InventoryItem } from "@/types/inventory";
@@ -34,6 +35,7 @@ const transactionColumns: DataColumn<StockTransaction>[] = [
 ];
 
 export default function IssueStockPage() {
+  const { user } = useAuth();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [batches, setBatches] = useState<StockBatch[]>([]);
@@ -66,6 +68,14 @@ export default function IssueStockPage() {
       setTransactions([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function refreshItems() {
+    try {
+      setItems((await api.get<InventoryItem[]>("/items")) ?? []);
+    } catch {
+      // ignore fallback
     }
   }
 
@@ -105,6 +115,24 @@ export default function IssueStockPage() {
   const currentStock = selectedItem?.CurrentStock ?? batches.reduce((total, batch) => total + Number(batch.QuantityAvailable ?? 0), 0);
   const activeItems = items.filter((item) => item.ItemStatus !== "Inactive");
 
+  function handleDepartmentChange(val: string) {
+    setDepartmentId(val);
+    setSuccess("");
+    setError("");
+  }
+
+  function handleItemChange(val: string) {
+    setItemId(val);
+    setSuccess("");
+    setError("");
+  }
+
+  function handleQuantityChange(val: string) {
+    setQuantity(val);
+    setSuccess("");
+    setError("");
+  }
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
@@ -121,12 +149,14 @@ export default function IssueStockPage() {
     try {
       await api.post("/stock/issue", toBackendIssuePayload({
         departmentId: Number(departmentId),
-        requestedByStaffId: DEMO_STAFF_ID,
+        requestedByStaffId: user?.StaffID ?? DEMO_STAFF_ID,
         itemId: Number(itemId),
         quantity: requestedQuantity,
       }));
       setSuccess("Stock issued successfully. The backend stored procedure updated batches and inserted the stock transaction.");
-      await Promise.all([refreshItemBatches(itemId), refreshTransactions()]);
+      setItemId("");
+      setQuantity("1");
+      await Promise.all([refreshItems(), refreshTransactions()]);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -166,7 +196,7 @@ export default function IssueStockPage() {
               ) : null}
               <div className="grid gap-2">
                 <Label>Department</Label>
-                <Select value={departmentId} onValueChange={(value) => setDepartmentId(value ?? "")}>
+                <Select value={departmentId} onValueChange={(value) => handleDepartmentChange(value ?? "")}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
@@ -181,7 +211,7 @@ export default function IssueStockPage() {
               </div>
               <div className="grid gap-2">
                 <Label>Item</Label>
-                <Select value={itemId} onValueChange={(value) => setItemId(value ?? "")}>
+                <Select value={itemId} onValueChange={(value) => handleItemChange(value ?? "")}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select stock item" />
                   </SelectTrigger>
@@ -201,7 +231,7 @@ export default function IssueStockPage() {
                   min={1}
                   type="number"
                   value={quantity}
-                  onChange={(event) => setQuantity(event.target.value)}
+                  onChange={(event) => handleQuantityChange(event.target.value)}
                   required
                 />
               </div>

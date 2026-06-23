@@ -90,17 +90,18 @@ GO
 
 SET IDENTITY_INSERT dbo.PurchaseOrder ON;
 INSERT INTO dbo.PurchaseOrder (PurchaseOrderID, SupplierID, CreatedByStaffID, OrderDate, ExpectedDeliveryDate, CompletedDate, OrderStatus) VALUES
-(1, 1, 4, '2026-01-05T09:30:00', '2026-01-10', '2026-01-09', 'Completed'),
-(2, 3, 4, '2026-01-07T10:15:00', '2026-01-14', '2026-01-13', 'Completed'),
-(3, 5, 4, '2026-01-10T11:00:00', '2026-01-18', '2026-01-18', 'Completed'),
-(4, 4, 4, '2026-02-01T09:45:00', '2026-02-06', '2026-02-05', 'Completed'),
-(5, 7, 4, '2026-02-05T14:10:00', '2026-02-12', '2026-02-14', 'Completed'),
-(6, 10, 4, '2026-02-07T15:20:00', '2026-02-12', '2026-02-11', 'Completed'),
-(7, 9, 4, '2026-03-01T10:00:00', '2026-03-13', NULL, 'Ordered'),
-(8, 2, 4, '2026-03-05T13:00:00', '2026-03-12', NULL, 'Approved'),
-(9, 6, 4, '2026-03-10T09:25:00', '2026-03-21', NULL, 'Pending'),
-(10, 8, 4, '2026-03-12T16:05:00', '2026-03-22', NULL, 'Cancelled'),
-(11, 3, 4, '2026-03-14T09:40:00', '2026-03-20', '2026-03-19', 'Completed');
+(1, 1, 4, DATEADD(day, -150, GETDATE()), CAST(DATEADD(day, -145, GETDATE()) AS DATE), CAST(DATEADD(day, -146, GETDATE()) AS DATE), 'Completed'),
+(2, 3, 4, DATEADD(day, -140, GETDATE()), CAST(DATEADD(day, -133, GETDATE()) AS DATE), CAST(DATEADD(day, -134, GETDATE()) AS DATE), 'Completed'),
+(3, 5, 4, DATEADD(day, -130, GETDATE()), CAST(DATEADD(day, -122, GETDATE()) AS DATE), CAST(DATEADD(day, -122, GETDATE()) AS DATE), 'Completed'),
+(4, 4, 4, DATEADD(day, -110, GETDATE()), CAST(DATEADD(day, -105, GETDATE()) AS DATE), CAST(DATEADD(day, -106, GETDATE()) AS DATE), 'Completed'),
+(5, 7, 4, DATEADD(day, -100, GETDATE()), CAST(DATEADD(day, -93, GETDATE()) AS DATE), CAST(DATEADD(day, -92, GETDATE()) AS DATE), 'Completed'),
+(6, 10, 4, DATEADD(day, -90, GETDATE()), CAST(DATEADD(day, -85, GETDATE()) AS DATE), CAST(DATEADD(day, -86, GETDATE()) AS DATE), 'Completed'),
+(7, 9, 4, DATEADD(day, -70, GETDATE()), CAST(DATEADD(day, -58, GETDATE()) AS DATE), CAST(DATEADD(day, -59, GETDATE()) AS DATE), 'Completed'),
+(8, 2, 4, DATEADD(day, -60, GETDATE()), CAST(DATEADD(day, -53, GETDATE()) AS DATE), CAST(DATEADD(day, -53, GETDATE()) AS DATE), 'Completed'),
+(9, 6, 4, DATEADD(day, -45, GETDATE()), CAST(DATEADD(day, -35, GETDATE()) AS DATE), CAST(DATEADD(day, -36, GETDATE()) AS DATE), 'Completed'),
+(10, 8, 4, DATEADD(day, -30, GETDATE()), CAST(DATEADD(day, -20, GETDATE()) AS DATE), NULL, 'Ordered'),
+(11, 3, 4, DATEADD(day, -15, GETDATE()), CAST(DATEADD(day, -9, GETDATE()) AS DATE), CAST(DATEADD(day, -10, GETDATE()) AS DATE), 'Completed'),
+(12, 1, 4, DATEADD(day, -5, GETDATE()), CAST(DATEADD(day, 0, GETDATE()) AS DATE), NULL, 'Approved');
 SET IDENTITY_INSERT dbo.PurchaseOrder OFF;
 GO
 
@@ -116,51 +117,56 @@ INSERT INTO dbo.PurchaseOrderDetail (PurchaseOrderDetailID, PurchaseOrderID, Ite
 (8, 5, 9, 300, 300, 55.00),
 (9, 6, 8, 250, 250, 425.00),
 (10, 6, 12, 120, 120, 900.00),
-(11, 7, 10, 10, 0, 18500.00),
-(12, 7, 11, 30, 0, 1450.00),
-(13, 8, 1, 600, 0, 3.65),
-(14, 9, 2, 500, 0, 8.40),
+(11, 7, 10, 10, 10, 18500.00),
+(12, 7, 11, 30, 30, 1450.00),
+(13, 8, 1, 600, 600, 3.65),
+(14, 9, 2, 500, 500, 8.40),
 (15, 10, 4, 50, 0, 975.00),
 (16, 11, 13, 180, 180, 12.50),
-(17, 11, 14, 12, 12, 6500.00);
+(17, 11, 14, 12, 12, 6500.00),
+(18, 12, 1, 200, 0, 3.50);
 SET IDENTITY_INSERT dbo.PurchaseOrderDetail OFF;
 GO
 
 SET IDENTITY_INSERT dbo.StockBatch ON;
 INSERT INTO dbo.StockBatch (BatchID, ItemID, SupplierID, PurchaseOrderDetailID, BatchNumber, ReceivedDate, ManufactureDate, ExpiryDate, QuantityReceived, QuantityAvailable, UnitCost) VALUES
-(1, 1, 1, 1, 'PARA-B001', '2026-01-09', '2025-12-01', '2026-06-10', 200, 90, 3.50),
-(2, 1, 1, 1, 'PARA-B002', '2026-01-09', '2025-12-15', '2026-08-15', 300, 300, 3.50),
-(3, 2, 3, 3, 'AMOX-A101', '2026-01-13', '2025-11-10', '2026-07-30', 400, 330, 8.25),
-(4, 3, 3, 4, 'CEF-C201', '2026-01-13', '2025-12-05', '2026-05-25', 150, 85, 125.00),
-(5, 4, 5, 5, 'INS-I301', '2026-01-18', '2025-12-20', '2026-05-20', 120, 100, 950.00),
-(6, 5, 4, 6, 'SAL-S401', '2026-02-05', '2026-01-02', '2027-01-02', 80, 55, 620.00),
-(7, 6, 7, 7, 'GLO-G501', '2026-02-14', NULL, NULL, 200, 145, 1400.00),
-(8, 7, 10, 2, 'MASK-M601', '2026-01-09', NULL, NULL, 300, 260, 850.00),
-(9, 8, 10, 9, 'SYR-S701', '2026-02-11', NULL, NULL, 250, 190, 425.00),
-(10, 9, 7, 8, 'CAN-C801', '2026-02-14', NULL, '2028-02-01', 300, 255, 55.00),
-(11, 12, 7, 10, 'ECG-E901', '2026-02-11', NULL, '2027-06-30', 120, 90, 900.00),
-(12, 10, 9, NULL, 'BPM-X001', '2026-03-01', NULL, NULL, 8, 8, 18500.00),
-(13, 11, 9, NULL, 'THER-T101', '2026-03-01', NULL, NULL, 20, 15, 1450.00),
-(14, 3, 3, NULL, 'CEF-OLD01', '2025-12-01', '2025-01-01', '2026-04-20', 40, 40, 118.00),
-(15, 13, 3, 16, 'OME-O101', '2026-03-19', '2026-01-20', '2027-01-20', 180, 150, 12.50),
-(16, 14, 9, 17, 'OXI-P101', '2026-03-19', NULL, NULL, 12, 10, 6500.00);
+(1, 1, 1, 1, 'PARA-B001', CAST(DATEADD(day, -146, GETDATE()) AS DATE), CAST(DATEADD(day, -180, GETDATE()) AS DATE), CAST(DATEADD(day, -10, GETDATE()) AS DATE), 200, 90, 3.50),
+(2, 1, 1, 1, 'PARA-B002', CAST(DATEADD(day, -146, GETDATE()) AS DATE), CAST(DATEADD(day, -170, GETDATE()) AS DATE), CAST(DATEADD(day, 60, GETDATE()) AS DATE), 300, 300, 3.50),
+(3, 2, 3, 3, 'AMOX-A101', CAST(DATEADD(day, -134, GETDATE()) AS DATE), CAST(DATEADD(day, -190, GETDATE()) AS DATE), CAST(DATEADD(day, 45, GETDATE()) AS DATE), 400, 330, 8.25),
+(4, 3, 3, 4, 'CEF-C201', CAST(DATEADD(day, -134, GETDATE()) AS DATE), CAST(DATEADD(day, -170, GETDATE()) AS DATE), CAST(DATEADD(day, 2, GETDATE()) AS DATE), 150, 85, 125.00),
+(5, 4, 5, 5, 'INS-I301', CAST(DATEADD(day, -122, GETDATE()) AS DATE), CAST(DATEADD(day, -150, GETDATE()) AS DATE), CAST(DATEADD(day, 5, GETDATE()) AS DATE), 120, 100, 950.00),
+(6, 5, 4, 6, 'SAL-S401', CAST(DATEADD(day, -106, GETDATE()) AS DATE), CAST(DATEADD(day, -140, GETDATE()) AS DATE), CAST(DATEADD(day, 200, GETDATE()) AS DATE), 80, 55, 620.00),
+(7, 6, 7, 7, 'GLO-G501', CAST(DATEADD(day, -92, GETDATE()) AS DATE), NULL, NULL, 200, 145, 1400.00),
+(8, 7, 10, 2, 'MASK-M601', CAST(DATEADD(day, -146, GETDATE()) AS DATE), NULL, NULL, 300, 260, 850.00),
+(9, 8, 10, 9, 'SYR-S701', CAST(DATEADD(day, -86, GETDATE()) AS DATE), NULL, NULL, 250, 190, 425.00),
+(10, 9, 7, 8, 'CAN-C801', CAST(DATEADD(day, -92, GETDATE()) AS DATE), NULL, CAST(DATEADD(day, 600, GETDATE()) AS DATE), 300, 255, 55.00),
+(11, 12, 7, 10, 'ECG-E901', CAST(DATEADD(day, -86, GETDATE()) AS DATE), NULL, CAST(DATEADD(day, 300, GETDATE()) AS DATE), 120, 90, 900.00),
+(12, 10, 9, 11, 'BPM-X001', CAST(DATEADD(day, -59, GETDATE()) AS DATE), NULL, NULL, 8, 8, 18500.00),
+(13, 11, 9, 12, 'THER-T101', CAST(DATEADD(day, -59, GETDATE()) AS DATE), NULL, NULL, 20, 15, 1450.00),
+(14, 3, 3, NULL, 'CEF-OLD01', CAST(DATEADD(day, -200, GETDATE()) AS DATE), CAST(DATEADD(day, -500, GETDATE()) AS DATE), CAST(DATEADD(day, -20, GETDATE()) AS DATE), 40, 40, 118.00),
+(15, 13, 3, 16, 'OME-O101', CAST(DATEADD(day, -10, GETDATE()) AS DATE), CAST(DATEADD(day, -60, GETDATE()) AS DATE), CAST(DATEADD(day, 300, GETDATE()) AS DATE), 180, 150, 12.50),
+(16, 14, 9, 17, 'OXI-P101', CAST(DATEADD(day, -10, GETDATE()) AS DATE), NULL, NULL, 12, 10, 6500.00),
+(17, 1, 2, 13, 'PARA-B003', CAST(DATEADD(day, -53, GETDATE()) AS DATE), CAST(DATEADD(day, -90, GETDATE()) AS DATE), CAST(DATEADD(day, 120, GETDATE()) AS DATE), 600, 600, 3.65),
+(18, 2, 6, 14, 'AMOX-A102', CAST(DATEADD(day, -36, GETDATE()) AS DATE), CAST(DATEADD(day, -80, GETDATE()) AS DATE), CAST(DATEADD(day, 150, GETDATE()) AS DATE), 500, 500, 8.40);
 SET IDENTITY_INSERT dbo.StockBatch OFF;
 GO
 
 SET IDENTITY_INSERT dbo.IssueRequest ON;
 INSERT INTO dbo.IssueRequest (IssueRequestID, DepartmentID, RequestedByStaffID, RequestDate, RequestStatus, ApprovedByStaffID, ApprovedDate) VALUES
-(1, 2, 5, '2026-02-15T09:10:00', 'Issued', 2, '2026-02-15T09:20:00'),
-(2, 3, 6, '2026-02-17T11:00:00', 'Issued', 2, '2026-02-17T11:15:00'),
-(3, 7, 9, '2026-02-18T14:30:00', 'Issued', 3, '2026-02-18T14:45:00'),
-(4, 8, 10, '2026-02-20T10:20:00', 'Issued', 3, '2026-02-20T10:35:00'),
-(5, 5, 7, '2026-02-21T13:05:00', 'Issued', 2, '2026-02-21T13:10:00'),
-(6, 10, 8, '2026-02-25T08:50:00', 'Issued', 2, '2026-02-25T09:00:00'),
-(7, 2, 5, '2026-03-03T12:25:00', 'Issued', 2, '2026-03-03T12:40:00'),
-(8, 4, 4, '2026-03-06T15:15:00', 'Issued', 2, '2026-03-06T15:20:00'),
-(9, 6, 5, '2026-03-08T10:00:00', 'Issued', 3, '2026-03-08T10:10:00'),
-(10, 9, 8, '2026-03-10T16:30:00', 'Issued', 2, '2026-03-10T16:40:00'),
-(11, 2, 5, '2026-03-20T09:15:00', 'Issued', 3, '2026-03-20T09:25:00'),
-(12, 3, 6, '2026-03-21T14:00:00', 'Issued', 2, '2026-03-21T14:10:00');
+(1, 2, 5, DATEADD(day, -120, GETDATE()), 'Issued', 2, DATEADD(day, -120, GETDATE())),
+(2, 3, 6, DATEADD(day, -110, GETDATE()), 'Issued', 2, DATEADD(day, -110, GETDATE())),
+(3, 7, 9, DATEADD(day, -100, GETDATE()), 'Issued', 3, DATEADD(day, -100, GETDATE())),
+(4, 8, 10, DATEADD(day, -90, GETDATE()), 'Issued', 3, DATEADD(day, -90, GETDATE())),
+(5, 5, 7, DATEADD(day, -80, GETDATE()), 'Issued', 2, DATEADD(day, -80, GETDATE())),
+(6, 10, 8, DATEADD(day, -70, GETDATE()), 'Issued', 2, DATEADD(day, -70, GETDATE())),
+(7, 2, 5, DATEADD(day, -60, GETDATE()), 'Issued', 2, DATEADD(day, -60, GETDATE())),
+(8, 4, 4, DATEADD(day, -50, GETDATE()), 'Issued', 2, DATEADD(day, -50, GETDATE())),
+(9, 6, 5, DATEADD(day, -40, GETDATE()), 'Issued', 3, DATEADD(day, -40, GETDATE())),
+(10, 9, 8, DATEADD(day, -30, GETDATE()), 'Issued', 2, DATEADD(day, -30, GETDATE())),
+(11, 2, 5, DATEADD(day, -15, GETDATE()), 'Issued', 3, DATEADD(day, -15, GETDATE())),
+(12, 3, 6, DATEADD(day, -5, GETDATE()), 'Issued', 2, DATEADD(day, -5, GETDATE())),
+(13, 1, 3, DATEADD(day, -2, GETDATE()), 'Issued', 2, DATEADD(day, -2, GETDATE())),
+(14, 2, 5, DATEADD(day, -1, GETDATE()), 'Pending', NULL, NULL);
 SET IDENTITY_INSERT dbo.IssueRequest OFF;
 GO
 
@@ -179,68 +185,48 @@ INSERT INTO dbo.IssueRequestDetail (IssueRequestDetailID, IssueRequestID, ItemID
 (11, 9, 5, 25, 25, 25),
 (12, 10, 11, 5, 5, 5),
 (13, 11, 13, 30, 30, 30),
-(14, 12, 14, 2, 2, 2);
+(14, 12, 14, 2, 2, 2),
+(15, 13, 1, 100, 100, 100),
+(16, 14, 2, 40, 0, 0);
 SET IDENTITY_INSERT dbo.IssueRequestDetail OFF;
 GO
 
 SET IDENTITY_INSERT dbo.StockTransaction ON;
 INSERT INTO dbo.StockTransaction (TransactionID, BatchID, ItemID, TransactionType, Quantity, TransactionDate, ReferenceType, ReferenceID, StaffID, Notes) VALUES
-(1, 1, 1, 'PURCHASE_RECEIVE', 200, '2026-01-09T09:00:00', 'PurchaseOrderDetail', 1, 4, 'Initial stock receive'),
-(2, 2, 1, 'PURCHASE_RECEIVE', 300, '2026-01-09T09:05:00', 'PurchaseOrderDetail', 1, 4, 'Initial stock receive'),
-(3, 3, 2, 'PURCHASE_RECEIVE', 400, '2026-01-13T10:00:00', 'PurchaseOrderDetail', 3, 4, 'Initial stock receive'),
-(4, 4, 3, 'PURCHASE_RECEIVE', 150, '2026-01-13T10:05:00', 'PurchaseOrderDetail', 4, 4, 'Initial stock receive'),
-(5, 5, 4, 'PURCHASE_RECEIVE', 120, '2026-01-18T11:00:00', 'PurchaseOrderDetail', 5, 4, 'Initial stock receive'),
-(6, 6, 5, 'PURCHASE_RECEIVE', 80, '2026-02-05T10:00:00', 'PurchaseOrderDetail', 6, 4, 'Initial stock receive'),
-(7, 7, 6, 'PURCHASE_RECEIVE', 200, '2026-02-14T11:00:00', 'PurchaseOrderDetail', 7, 4, 'Initial stock receive'),
-(8, 8, 7, 'PURCHASE_RECEIVE', 300, '2026-01-09T09:10:00', 'PurchaseOrderDetail', 2, 4, 'Initial stock receive'),
-(9, 9, 8, 'PURCHASE_RECEIVE', 250, '2026-02-11T14:00:00', 'PurchaseOrderDetail', 9, 4, 'Initial stock receive'),
-(10, 10, 9, 'PURCHASE_RECEIVE', 300, '2026-02-14T11:05:00', 'PurchaseOrderDetail', 8, 4, 'Initial stock receive'),
-(11, 11, 12, 'PURCHASE_RECEIVE', 120, '2026-02-11T14:05:00', 'PurchaseOrderDetail', 10, 4, 'Initial stock receive'),
-(12, 1, 1, 'DEPARTMENT_ISSUE', 60, '2026-02-15T09:25:00', 'IssueRequest', 1, 3, 'Emergency issue'),
-(13, 8, 7, 'DEPARTMENT_ISSUE', 40, '2026-02-15T09:26:00', 'IssueRequest', 1, 3, 'Emergency issue'),
-(14, 5, 4, 'DEPARTMENT_ISSUE', 20, '2026-02-17T11:20:00', 'IssueRequest', 2, 3, 'ICU issue'),
-(15, 10, 9, 'DEPARTMENT_ISSUE', 45, '2026-02-17T11:21:00', 'IssueRequest', 2, 3, 'ICU issue'),
-(16, 3, 2, 'DEPARTMENT_ISSUE', 70, '2026-02-18T14:50:00', 'IssueRequest', 3, 3, 'Pediatric issue'),
-(17, 1, 1, 'DEPARTMENT_ISSUE', 50, '2026-02-20T10:40:00', 'IssueRequest', 4, 3, 'Maternity issue'),
-(18, 9, 8, 'DEPARTMENT_ISSUE', 60, '2026-02-21T13:15:00', 'IssueRequest', 5, 3, 'Laboratory issue'),
-(19, 7, 6, 'DEPARTMENT_ISSUE', 55, '2026-02-25T09:05:00', 'IssueRequest', 6, 3, 'General ward issue'),
-(20, 4, 3, 'DEPARTMENT_ISSUE', 65, '2026-03-03T12:45:00', 'IssueRequest', 7, 3, 'Emergency issue'),
-(21, 11, 12, 'DEPARTMENT_ISSUE', 30, '2026-03-06T15:25:00', 'IssueRequest', 8, 3, 'Surgery issue'),
-(22, 6, 5, 'DEPARTMENT_ISSUE', 25, '2026-03-08T10:15:00', 'IssueRequest', 9, 3, 'OPD issue'),
-(23, 13, 11, 'PURCHASE_RECEIVE', 20, '2026-03-01T08:10:00', 'DirectReceive', 13, 4, 'Direct stock receive'),
-(24, 13, 11, 'DEPARTMENT_ISSUE', 5, '2026-03-10T16:45:00', 'IssueRequest', 10, 3, 'Radiology issue'),
-(25, 14, 3, 'PURCHASE_RECEIVE', 40, '2025-12-01T08:30:00', 'DirectReceive', 14, 4, 'Older batch receive'),
-(26, 15, 13, 'PURCHASE_RECEIVE', 180, '2026-03-19T09:30:00', 'PurchaseOrderDetail', 16, 4, 'Initial stock receive'),
-(27, 16, 14, 'PURCHASE_RECEIVE', 12, '2026-03-19T09:35:00', 'PurchaseOrderDetail', 17, 4, 'Initial stock receive'),
-(28, 15, 13, 'DEPARTMENT_ISSUE', 30, '2026-03-20T09:30:00', 'IssueRequest', 11, 3, 'Emergency omeprazole issue'),
-(29, 16, 14, 'DEPARTMENT_ISSUE', 2, '2026-03-21T14:20:00', 'IssueRequest', 12, 3, 'ICU pulse oximeter issue');
+(1, 1, 1, 'PURCHASE_RECEIVE', 200, DATEADD(day, -146, GETDATE()), 'PurchaseOrderDetail', 1, 4, 'Initial stock receive'),
+(2, 2, 1, 'PURCHASE_RECEIVE', 300, DATEADD(day, -146, GETDATE()), 'PurchaseOrderDetail', 1, 4, 'Initial stock receive'),
+(3, 3, 2, 'PURCHASE_RECEIVE', 400, DATEADD(day, -134, GETDATE()), 'PurchaseOrderDetail', 3, 4, 'Initial stock receive'),
+(4, 4, 3, 'PURCHASE_RECEIVE', 150, DATEADD(day, -134, GETDATE()), 'PurchaseOrderDetail', 4, 4, 'Initial stock receive'),
+(5, 5, 4, 'PURCHASE_RECEIVE', 120, DATEADD(day, -122, GETDATE()), 'PurchaseOrderDetail', 5, 4, 'Initial stock receive'),
+(6, 6, 5, 'PURCHASE_RECEIVE', 80, DATEADD(day, -106, GETDATE()), 'PurchaseOrderDetail', 6, 4, 'Initial stock receive'),
+(7, 7, 6, 'PURCHASE_RECEIVE', 200, DATEADD(day, -92, GETDATE()), 'PurchaseOrderDetail', 7, 4, 'Initial stock receive'),
+(8, 8, 7, 'PURCHASE_RECEIVE', 300, DATEADD(day, -146, GETDATE()), 'PurchaseOrderDetail', 2, 4, 'Initial stock receive'),
+(9, 9, 8, 'PURCHASE_RECEIVE', 250, DATEADD(day, -86, GETDATE()), 'PurchaseOrderDetail', 9, 4, 'Initial stock receive'),
+(10, 10, 9, 'PURCHASE_RECEIVE', 300, DATEADD(day, -92, GETDATE()), 'PurchaseOrderDetail', 8, 4, 'Initial stock receive'),
+(11, 11, 12, 'PURCHASE_RECEIVE', 120, DATEADD(day, -86, GETDATE()), 'PurchaseOrderDetail', 10, 4, 'Initial stock receive'),
+(12, 1, 1, 'DEPARTMENT_ISSUE', 60, DATEADD(day, -120, GETDATE()), 'IssueRequest', 1, 3, 'Emergency issue'),
+(13, 8, 7, 'DEPARTMENT_ISSUE', 40, DATEADD(day, -120, GETDATE()), 'IssueRequest', 1, 3, 'Emergency issue'),
+(14, 5, 4, 'DEPARTMENT_ISSUE', 20, DATEADD(day, -110, GETDATE()), 'IssueRequest', 2, 3, 'ICU issue'),
+(15, 10, 9, 'DEPARTMENT_ISSUE', 45, DATEADD(day, -110, GETDATE()), 'IssueRequest', 2, 3, 'ICU issue'),
+(16, 3, 2, 'DEPARTMENT_ISSUE', 70, DATEADD(day, -100, GETDATE()), 'IssueRequest', 3, 3, 'Pediatric issue'),
+(17, 1, 1, 'DEPARTMENT_ISSUE', 50, DATEADD(day, -90, GETDATE()), 'IssueRequest', 4, 3, 'Maternity issue'),
+(18, 9, 8, 'DEPARTMENT_ISSUE', 60, DATEADD(day, -80, GETDATE()), 'IssueRequest', 5, 3, 'Laboratory issue'),
+(19, 7, 6, 'DEPARTMENT_ISSUE', 55, DATEADD(day, -70, GETDATE()), 'IssueRequest', 6, 3, 'General ward issue'),
+(20, 4, 3, 'DEPARTMENT_ISSUE', 65, DATEADD(day, -60, GETDATE()), 'IssueRequest', 7, 3, 'Emergency issue'),
+(21, 11, 12, 'DEPARTMENT_ISSUE', 30, DATEADD(day, -50, GETDATE()), 'IssueRequest', 8, 3, 'Surgery issue'),
+(22, 6, 5, 'DEPARTMENT_ISSUE', 25, DATEADD(day, -40, GETDATE()), 'IssueRequest', 9, 3, 'OPD issue'),
+(23, 13, 11, 'PURCHASE_RECEIVE', 20, DATEADD(day, -59, GETDATE()), 'DirectReceive', 13, 4, 'Direct stock receive'),
+(24, 13, 11, 'DEPARTMENT_ISSUE', 5, DATEADD(day, -30, GETDATE()), 'IssueRequest', 10, 3, 'Radiology issue'),
+(25, 14, 3, 'PURCHASE_RECEIVE', 40, DATEADD(day, -200, GETDATE()), 'DirectReceive', 14, 4, 'Older batch receive'),
+(26, 15, 13, 'PURCHASE_RECEIVE', 180, DATEADD(day, -10, GETDATE()), 'PurchaseOrderDetail', 16, 4, 'Initial stock receive'),
+(27, 16, 14, 'PURCHASE_RECEIVE', 12, DATEADD(day, -10, GETDATE()), 'PurchaseOrderDetail', 17, 4, 'Initial stock receive'),
+(28, 15, 13, 'DEPARTMENT_ISSUE', 30, DATEADD(day, -8, GETDATE()), 'IssueRequest', 11, 3, 'Emergency omeprazole issue'),
+(29, 16, 14, 'DEPARTMENT_ISSUE', 2, DATEADD(day, -4, GETDATE()), 'IssueRequest', 12, 3, 'ICU pulse oximeter issue'),
+(30, 2, 1, 'DEPARTMENT_ISSUE', 100, DATEADD(day, -2, GETDATE()), 'IssueRequest', 13, 3, 'General ward paracetamol issue'),
+(31, 12, 10, 'PURCHASE_RECEIVE', 8, DATEADD(day, -59, GETDATE()), 'DirectReceive', 12, 4, 'Direct stock receive for blood pressure monitors'),
+(32, 17, 1, 'PURCHASE_RECEIVE', 600, DATEADD(day, -53, GETDATE()), 'PurchaseOrderDetail', 13, 4, 'Large paracetamol batch receive'),
+(33, 18, 2, 'PURCHASE_RECEIVE', 500, DATEADD(day, -36, GETDATE()), 'PurchaseOrderDetail', 14, 4, 'Amoxicillin batch receive');
 SET IDENTITY_INSERT dbo.StockTransaction OFF;
-GO
-
-INSERT INTO dbo.StockTransaction
-(
-    BatchID,
-    ItemID,
-    TransactionType,
-    Quantity,
-    TransactionDate,
-    ReferenceType,
-    ReferenceID,
-    StaffID,
-    Notes
-)
-VALUES
-(
-    12,
-    10,
-    'PURCHASE_RECEIVE',
-    8,
-    '2026-03-01T08:00:00',
-    'DirectReceive',
-    12,
-    4,
-    'Direct stock receive for blood pressure monitors'
-);
 GO
 
 INSERT INTO dbo.ReorderRule (ItemID, MinimumStockLevel, ReorderQuantity, SafetyStock, LeadTimeDays, Status) VALUES
@@ -261,7 +247,8 @@ INSERT INTO dbo.ReorderRule (ItemID, MinimumStockLevel, ReorderQuantity, SafetyS
 GO
 
 INSERT INTO dbo.ExpiryAlert (BatchID, ItemID, AlertDate, ExpiryDate, AlertType, AlertStatus) VALUES
-(4, 3, SYSDATETIME(), '2026-05-25', 'Critical', 'Open'),
-(5, 4, SYSDATETIME(), '2026-05-20', 'Critical', 'Open'),
-(14, 3, SYSDATETIME(), '2026-04-20', 'Expired', 'Open');
+(4, 3, SYSDATETIME(), CAST(DATEADD(day, 2, GETDATE()) AS DATE), 'Critical', 'Open'),
+(5, 4, SYSDATETIME(), CAST(DATEADD(day, 5, GETDATE()) AS DATE), 'Critical', 'Open'),
+(14, 3, SYSDATETIME(), CAST(DATEADD(day, -20, GETDATE()) AS DATE), 'Expired', 'Open');
 GO
+

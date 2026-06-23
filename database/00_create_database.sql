@@ -1,10 +1,14 @@
 USE master;
 GO
 
-IF DB_ID(N'HealthcareInventoryDB') IS NULL
+IF DB_ID(N'HealthcareInventoryDB') IS NOT NULL
 BEGIN
-    CREATE DATABASE HealthcareInventoryDB;
+    ALTER DATABASE HealthcareInventoryDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE HealthcareInventoryDB;
 END;
+GO
+
+CREATE DATABASE HealthcareInventoryDB;
 GO
 
 ALTER DATABASE HealthcareInventoryDB SET RECOVERY SIMPLE;
@@ -15,4 +19,5 @@ GO
 
 USE HealthcareInventoryDB;
 GO
+
 

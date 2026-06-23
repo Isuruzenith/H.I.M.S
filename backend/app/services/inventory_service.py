@@ -33,7 +33,7 @@ def get_items(category: str | None = None, search: str | None = None):
 
 
 def get_item(item_id: int):
-    return fetch_one(
+    item = fetch_one(
         """
         SELECT
             ItemID,
@@ -49,10 +49,37 @@ def get_item(item_id: int):
         """,
         [item_id],
     )
+    if not item:
+        return None
+
+    if item["ItemCategory"] == "Medicine":
+        med = fetch_one(
+            """
+            SELECT GenericName, BrandName, Dosage, DrugForm, StorageCondition, PrescriptionRequired
+            FROM dbo.Medicine
+            WHERE ItemID = ?
+            """,
+            [item_id]
+        )
+        if med:
+            item.update(med)
+    elif item["ItemCategory"] == "Equipment":
+        eq = fetch_one(
+            """
+            SELECT EquipmentType, WarrantyMonths, MaintenanceRequired, ServiceFrequencyMonths
+            FROM dbo.MedicalEquipment
+            WHERE ItemID = ?
+            """,
+            [item_id]
+        )
+        if eq:
+            item.update(eq)
+
+    return item
 
 
 def create_item(payload: dict):
-    return execute_returning(
+    item_id = execute_returning(
         """
         INSERT INTO dbo.InventoryItem
             (ItemName, ItemCategory, UnitOfMeasure, ReorderLevel, MaximumStockLevel, ItemStatus)
@@ -67,7 +94,42 @@ def create_item(payload: dict):
             payload.get("maximum_stock_level", 0),
             payload.get("item_status"),
         ],
-    )[0]
+    )[0]["ItemID"]
+
+    category = payload["item_category"]
+    if category == "Medicine":
+        execute(
+            """
+            INSERT INTO dbo.Medicine
+                (ItemID, GenericName, BrandName, Dosage, DrugForm, StorageCondition, PrescriptionRequired)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                item_id,
+                payload.get("generic_name", payload["item_name"]),
+                payload.get("brand_name"),
+                payload.get("dosage", "N/A"),
+                payload.get("drug_form", "N/A"),
+                payload.get("storage_condition"),
+                1 if payload.get("prescription_required") else 0,
+            ]
+        )
+    elif category == "Equipment":
+        execute(
+            """
+            INSERT INTO dbo.MedicalEquipment
+                (ItemID, EquipmentType, WarrantyMonths, MaintenanceRequired, ServiceFrequencyMonths)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            [
+                item_id,
+                payload.get("equipment_type", "General"),
+                payload.get("warranty_months", 0),
+                1 if payload.get("maintenance_required") else 0,
+                payload.get("service_frequency_months"),
+            ]
+        )
+    return get_item(item_id)
 
 
 def update_item(item_id: int, payload: dict):
@@ -93,6 +155,85 @@ def update_item(item_id: int, payload: dict):
             item_id,
         ],
     )
+
+    category = payload["item_category"]
+    if category == "Medicine":
+        exists = fetch_one("SELECT 1 FROM dbo.Medicine WHERE ItemID = ?", [item_id])
+        if exists:
+            execute(
+                """
+                UPDATE dbo.Medicine
+                SET GenericName = ?,
+                    BrandName = ?,
+                    Dosage = ?,
+                    DrugForm = ?,
+                    StorageCondition = ?,
+                    PrescriptionRequired = ?
+                WHERE ItemID = ?
+                """,
+                [
+                    payload.get("generic_name", payload["item_name"]),
+                    payload.get("brand_name"),
+                    payload.get("dosage", "N/A"),
+                    payload.get("drug_form", "N/A"),
+                    payload.get("storage_condition"),
+                    1 if payload.get("prescription_required") else 0,
+                    item_id
+                ]
+            )
+        else:
+            execute(
+                """
+                INSERT INTO dbo.Medicine
+                    (ItemID, GenericName, BrandName, Dosage, DrugForm, StorageCondition, PrescriptionRequired)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    item_id,
+                    payload.get("generic_name", payload["item_name"]),
+                    payload.get("brand_name"),
+                    payload.get("dosage", "N/A"),
+                    payload.get("drug_form", "N/A"),
+                    payload.get("storage_condition"),
+                    1 if payload.get("prescription_required") else 0,
+                ]
+            )
+    elif category == "Equipment":
+        exists = fetch_one("SELECT 1 FROM dbo.MedicalEquipment WHERE ItemID = ?", [item_id])
+        if exists:
+            execute(
+                """
+                UPDATE dbo.MedicalEquipment
+                SET EquipmentType = ?,
+                    WarrantyMonths = ?,
+                    MaintenanceRequired = ?,
+                    ServiceFrequencyMonths = ?
+                WHERE ItemID = ?
+                """,
+                [
+                    payload.get("equipment_type", "General"),
+                    payload.get("warranty_months", 0),
+                    1 if payload.get("maintenance_required") else 0,
+                    payload.get("service_frequency_months"),
+                    item_id
+                ]
+            )
+        else:
+            execute(
+                """
+                INSERT INTO dbo.MedicalEquipment
+                    (ItemID, EquipmentType, WarrantyMonths, MaintenanceRequired, ServiceFrequencyMonths)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                [
+                    item_id,
+                    payload.get("equipment_type", "General"),
+                    payload.get("warranty_months", 0),
+                    1 if payload.get("maintenance_required") else 0,
+                    payload.get("service_frequency_months"),
+                ]
+            )
+
     return get_item(item_id)
 
 

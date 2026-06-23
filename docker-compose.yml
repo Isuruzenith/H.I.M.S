@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: hims-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=GroupK@ADBMS
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: hims-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - SQLSERVER_CONNECTION_STRING=DRIVER={ODBC Driver 18 for SQL Server};SERVER=database,1433;DATABASE=HealthcareInventoryDB;UID=sa;PWD=GroupK@ADBMS;TrustServerCertificate=yes;Encrypt=yes;
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5000
+      - FLASK_DEBUG=false
+      - CORS_ORIGINS=*
+    depends_on:
+      - database
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: hims-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  sql_data:

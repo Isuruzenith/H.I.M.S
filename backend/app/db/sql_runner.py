@@ -37,9 +37,9 @@ def split_batches(script_text: str) -> list[str]:
     return batches
 
 
-def run_sql_file(path: Path) -> int:
+def run_sql_file(path: Path, database: str | None = None) -> int:
     batches = split_batches(path.read_text(encoding="utf-8-sig"))
-    with connection_scope(autocommit=True) as connection:
+    with connection_scope(autocommit=True, database=database) as connection:
         cursor = connection.cursor()
         for batch in batches:
             cursor.execute(batch)
@@ -53,10 +53,11 @@ def run_database_scripts(script_names: Iterable[str] = DEFAULT_SCRIPT_ORDER) -> 
     results: list[dict[str, int | str]] = []
     for script_name in script_names:
         script_path = DATABASE_DIR / script_name
+        db = "master" if script_name == "00_create_database.sql" else None
         results.append(
             {
                 "script": script_name,
-                "batches_executed": run_sql_file(script_path),
+                "batches_executed": run_sql_file(script_path, database=db),
             }
         )
 

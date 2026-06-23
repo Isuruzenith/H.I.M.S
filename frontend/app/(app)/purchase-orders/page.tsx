@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 
 import { PurchaseOrderDialog } from "@/components/forms/purchase-order-dialog";
 import { PageHeader } from "@/components/layout/page-header";
@@ -8,17 +9,33 @@ import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 import { api, getErrorMessage } from "@/lib/api";
 import type { Supplier } from "@/types/supplier";
 import type { PurchaseOrder } from "@/types/stock";
 
 const columns: DataColumn<PurchaseOrder>[] = [
-  { header: "PO ID", cell: (row) => `PO-${row.PurchaseOrderID}` },
+  {
+    header: "PO ID",
+    cell: (row) => (
+      <Link href={`/purchase-orders/${row.PurchaseOrderID}`} className="font-semibold text-primary hover:underline">
+        PO-{row.PurchaseOrderID}
+      </Link>
+    ),
+  },
   { header: "Supplier", cell: (row) => row.SupplierName },
   { header: "Created By", cell: (row) => row.CreatedBy ?? "-" },
   { header: "Order Date", cell: (row) => formatDate(row.OrderDate) },
   { header: "Expected", cell: (row) => formatDate(row.ExpectedDeliveryDate) },
   { header: "Status", cell: (row) => <StatusBadge value={row.OrderStatus} /> },
+  {
+    header: "Actions",
+    cell: (row) => (
+      <Link href={`/purchase-orders/${row.PurchaseOrderID}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+        View
+      </Link>
+    ),
+  },
 ];
 
 export default function PurchaseOrdersPage() {

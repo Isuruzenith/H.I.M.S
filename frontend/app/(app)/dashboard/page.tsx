@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 import { MonthlyIssueChart } from "@/components/charts/monthly-issue-chart";
 import { PageHeader } from "@/components/layout/page-header";
@@ -8,11 +9,24 @@ import { DataColumn, DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/tables/status-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { api, getErrorMessage } from "@/lib/api";
-import type { ExpiringSoonReportRow, LowStockReportRow } from "@/types/reports";
+import type { LowStockReportRow } from "@/types/reports";
 import type { StockTransaction } from "@/types/stock";
 
 type Summary = Record<string, number>;
+
+interface ExpiryAlertRow {
+  AlertID: number;
+  BatchID: number;
+  ItemID: number;
+  ItemName: string;
+  BatchNumber: string;
+  AlertDate: string;
+  ExpiryDate: string;
+  AlertType: string;
+  AlertStatus: string;
+}
 
 const lowStockColumns: DataColumn<LowStockReportRow>[] = [
   { header: "Item", cell: (row) => row.ItemName },
@@ -21,56 +35,99 @@ const lowStockColumns: DataColumn<LowStockReportRow>[] = [
   { header: "Reorder", cell: (row) => row.ReorderLevel ?? 0 },
 ];
 
-const expiryColumns: DataColumn<ExpiringSoonReportRow>[] = [
-  { header: "Item", cell: (row) => row.ItemName },
-  { header: "Batch", cell: (row) => row.BatchNumber },
-  { header: "Available", cell: (row) => row.QuantityAvailable ?? 0 },
-  { header: "Risk", cell: (row) => <StatusBadge value={row.AlertLevel} /> },
-];
-
 export default function DashboardPage() {
   const [summary, setSummary] = useState<Summary>({});
   const [lowStock, setLowStock] = useState<LowStockReportRow[]>([]);
-  const [expiring, setExpiring] = useState<ExpiringSoonReportRow[]>([]);
+  const [alerts, setAlerts] = useState<ExpiryAlertRow[]>([]);
   const [transactions, setTransactions] = useState<StockTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      setError("");
-      try {
-        const [summaryData, lowStockData, expiringData, transactionData] = await Promise.all([
-          api.get<Summary>("/dashboard/summary"),
-          api.get<LowStockReportRow[]>("/reports/low-stock"),
-          api.get<ExpiringSoonReportRow[]>("/reports/expiring-soon"),
-          api.get<StockTransaction[]>("/stock/transactions?limit=120"),
-        ]);
-        setSummary(summaryData ?? {});
-        setLowStock(lowStockData ?? []);
-        setExpiring(expiringData ?? []);
-        setTransactions(transactionData ?? []);
-      } catch (err) {
-        setError(getErrorMessage(err));
-        setSummary({});
-        setLowStock([]);
-        setExpiring([]);
-        setTransactions([]);
-      } finally {
-        setLoading(false);
-      }
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const [summaryData, lowStockData, alertsData, transactionData] = await Promise.all([
+        api.get<Summary>("/dashboard/summary"),
+        api.get<LowStockReportRow[]>("/reports/low-stock"),
+        api.get<ExpiryAlertRow[]>("/expiry-alerts?status=Open"),
+        api.get<StockTransaction[]>("/stock/transactions?limit=120"),
+      ]);
+      setSummary(summaryData ?? {});
+      setLowStock(lowStockData ?? []);
+      setAlerts(alertsData ?? []);
+      setTransactions(transactionData ?? []);
+    } catch (err) {
+      setError(getErrorMessage(err));
+      setSummary({});
+      setLowStock([]);
+      setAlerts([]);
+      setTransactions([]);
+    } finally {
+      setLoading(false);
     }
-
-    load();
   }, []);
 
-  const expiredBatches = expiring.filter((row) => row.AlertLevel === "Expired").length;
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const handleResolveAlert = async (alertId: number) => {
+    setActionLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      await api.patch(`/expiry-alerts/${alertId}/resolve`);
+      setSuccess("Expiry alert resolved successfully and batch cleared.");
+      // Reload dashboard data
+      const alertsData = await api.get<ExpiryAlertRow[]>("/expiry-alerts?status=Open");
+      setAlerts(alertsData ?? []);
+      const summaryData = await api.get<Summary>("/dashboard/summary");
+      setSummary(summaryData ?? {});
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const expiryColumns = useMemo<DataColumn<ExpiryAlertRow>[]>(
+    () => [
+      { header: "Item", cell: (row) => row.ItemName },
+      { header: "Batch", cell: (row) => row.BatchNumber },
+      {
+        header: "Expiry Date",
+        cell: (row) => (row.ExpiryDate ? new Date(row.ExpiryDate).toLocaleDateString() : "-"),
+      },
+      { header: "Risk Level", cell: (row) => <StatusBadge value={row.AlertType} /> },
+      {
+        header: "Actions",
+        cell: (row) => (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs flex items-center gap-1 border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+            disabled={actionLoading}
+            onClick={() => void handleResolveAlert(row.AlertID)}
+          >
+            <CheckCircle2 className="size-3" /> Resolve
+          </Button>
+        ),
+      },
+    ],
+    [actionLoading]
+  );
+
+  const expiredCount = alerts.filter((row) => row.AlertType === "Expired").length;
+  const expiringSoonCount = alerts.filter((row) => ["Critical", "Warning"].includes(row.AlertType)).length;
+
   const cards = [
     { label: "Total Items", value: summary.total_items ?? 0 },
     { label: "Low Stock", value: summary.low_stock_items ?? lowStock.length },
-    { label: "Expiring Soon", value: summary.expiring_batches ?? expiring.length },
-    { label: "Expired Batches", value: expiredBatches, alert: expiredBatches > 0 },
+    { label: "Expiring Soon", value: expiringSoonCount, alert: expiringSoonCount > 0 },
+    { label: "Expired Batches", value: expiredCount, alert: expiredCount > 0 },
     { label: "Pending Orders", value: summary.pending_purchase_orders ?? 0 },
     { label: "Monthly Issued", value: summary.monthly_issued_quantity ?? 0 },
   ];
@@ -87,9 +144,16 @@ export default function DashboardPage() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
+      {success ? (
+        <Alert className="mb-6 border-emerald-500/30 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="size-4 text-emerald-500" />
+          <AlertTitle>Action Completed</AlertTitle>
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      ) : null}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {cards.map((card) => (
-          <Card key={card.label} className={card.alert ? "border-destructive/30" : undefined}>
+          <Card key={card.label} className={card.alert ? "border-destructive/30 bg-destructive/5" : undefined}>
             <CardContent className="py-4">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {card.label}
@@ -116,10 +180,10 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Expiry Alerts</CardTitle>
-            <CardDescription>Batches approaching or past their expiry date.</CardDescription>
+            <CardDescription>Active alerts for batches approaching or past their expiry date.</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable columns={expiryColumns} data={expiring.slice(0, 6)} loading={loading} />
+            <DataTable columns={expiryColumns} data={alerts.slice(0, 6)} loading={loading} />
           </CardContent>
         </Card>
       </div>
